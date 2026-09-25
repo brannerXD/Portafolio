@@ -1,0 +1,16 @@
+# Dependencias y builds
+node_modules
+dist
+hero-loop/node_modules
+
+# Material crudo y generado localmente (se regenera con los scripts)
+tools/.raw
+hero-loop/build
+hero-loop/out
+
+# Local
+.claude
+.DS_Store
+Thumbs.db
+*.log
+.env*

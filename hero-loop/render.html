@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Hero loop</title>
+<style>
+  html, body { margin: 0; background: #06030d; overflow: hidden; }
+  canvas { display: block; width: 100vw; height: 100vh; object-fit: contain; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script>
+/*
+ * Loop del hero — shader original.
+ *
+ * Todo el movimiento depende de PH = 2π·t con t ∈ [0,1) y solo usa múltiplos
+ * enteros de PH, así que el cuadro TOTAL es idéntico al cuadro 0: el loop no
+ * tiene costura.
+ *
+ * Parámetros por URL: ?w=1920&h=1080&ss=2&layout=desk|mobile
+ */
+const q = new URLSearchParams(location.search);
+const W = +(q.get('w') || 1920), H = +(q.get('h') || 1080), SS = +(q.get('ss') || 2);
+const LAYOUT = q.get('layout') === 'mobile' ? 1 : 0;
+window.__TOTAL_FRAMES = +(q.get('frames') || 360);
+
+const canvas = document.getElementById('c');
+canvas.width = W * SS; canvas.height = H * SS;
+const gl = canvas.getContext('webgl2', { preserveDrawingBuffer: true, antialias: false });
+
+const vs = `#version 300 es
+in vec2 a; void main(){ gl_Position = vec4(a,0.,1.); }`;
+
+const fs = `#version 300 es
+precision highp float;
+uniform vec2 uRes;
+uniform float uT;
+uniform int uLayout;
+out vec4 outColor;
+
+#define TAU 6.28318530718
+float PH;
+vec2 RING_C;     // centro del anillo en pantalla
+float RING_R;    // radio del anillo
+
+float hash11(float n){ return fract(sin(n * 127.1) * 43758.5453123); }
+float hash21(vec2 p){ return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453); }
+
+/* ---------- Fondo: morado profundo con auroras ---------- */
+vec3 background(vec2 p){
+  vec3 top = vec3(0.048, 0.018, 0.098);
+  vec3 bot = vec3(0.009, 0.004, 0.022);
+  vec3 c = mix(bot, top, smoothstep(-0.75, 0.65, p.y));
+
+  vec2 g1 = RING_C + vec2(0.06 * cos(PH), 0.05 * sin(PH));
+  c += vec3(0.34, 0.10, 0.62) * 0.30 * exp(-dot(p - g1, p - g1) * 3.0);
+
+  vec2 g2 = vec2(-0.80 + 0.06 * sin(PH + 1.0), -0.38 + 0.04 * cos(PH));
+  c += vec3(0.50, 0.08, 0.42) * 0.16 * exp(-dot(p - g2, p - g2) * 4.0);
+
+  vec2 g3 = vec2(-0.15 + 0.12 * sin(PH + 2.0), 0.62);
+  c += vec3(0.16, 0.10, 0.50) * 0.22 * exp(-dot(p - g3, p - g3) * 3.0);
+  return c;
+}
+
+/* ---------- Cinta de hilos luminosos ---------- */
+vec3 ribbon(vec2 p, float yOff, float amp, float thick, float bright, float seed, int N){
+  float x = p.x;
+  float yc = yOff + amp * (0.17 * sin(1.45 * x + 2.0 * PH + seed) + 0.07 * sin(3.1 * x - 3.0 * PH + 1.3 * seed));
+  float w  = 0.13 * sin(1.8 * x - 2.0 * PH + 0.7 + seed);          // torsión: cambia de signo
+  float wa = abs(w) + 0.012;
+
+  vec3 col = vec3(0.0);
+  float dc = p.y - yc;
+  col += vec3(0.40, 0.14, 0.70) * 0.40 * exp(-dc * dc / (wa * wa * 1.6 + 0.0015));
+
+  vec3 acc = vec3(0.0);
+  for (int i = 0; i < 64; i++) {
+    if (i >= N) break;
+    float fi = float(i);
+    float s  = fi / float(N - 1) - 0.5;
+    float yi = yc + s * w + 0.006 * sin(5.0 * x + fi * 0.9 + 3.0 * PH);
+    float d  = abs(p.y - yi);
+    float l  = exp(-(d * d) / (thick * thick)) + 0.10 * exp(-d / (thick * 7.0));
+
+    vec3 lc = mix(vec3(0.86, 0.80, 1.00), vec3(0.56, 0.28, 0.96), smoothstep(0.0, 0.32, abs(s)));
+    lc = mix(lc, vec3(1.00, 0.40, 0.90), smoothstep(0.12, 0.5, s));
+    lc = mix(lc, vec3(0.40, 0.82, 1.00), 0.75 * smoothstep(0.20, 0.5, -s));
+
+    float sh = 0.22 + 0.78 * pow(0.5 + 0.5 * sin(2.6 * x - 5.0 * PH + s * 5.0 + seed), 4.0);
+    acc += lc * l * sh;
+  }
+  col += acc * (27.0 / float(N));
+  return col * bright;
+}
+
+/* ---------- Polvo luminoso que sube ---------- */
+vec3 dust(vec2 p){
+  vec3 c = vec3(0.0);
+  for (int k = 0; k < 56; k++) {
+    float fk = float(k);
+    float hx = hash11(fk * 1.37 + 0.1), hy = hash11(fk * 2.71 + 0.2), hs = hash11(fk * 3.19 + 0.3);
+    float sp = 2.0 + floor(hs * 3.0);                  // 1 o 2 vueltas por loop
+    float y  = fract(hy + uT * sp);
+    vec2  c0 = vec2((hx * 2.0 - 1.0) * 1.0 + 0.025 * sin(PH * sp + fk), y * 1.3 - 0.65);
+    float r  = mix(0.0012, 0.0055, hs * hs);
+    float d  = length(p - c0);
+    float a  = sin(3.14159 * y) * (0.35 + 0.65 * (0.5 + 0.5 * sin(PH * 2.0 + fk * 1.7)));
+    vec3 tint = mix(vec3(0.85, 0.72, 1.0), vec3(1.0, 0.62, 0.95), hash11(fk * 5.3));
+    c += tint * a * (exp(-(d * d) / (r * r)) * 0.9 + 0.10 * exp(-d / (r * 5.0)));
+  }
+  return c * 0.55;
+}
+
+vec3 scene2D(vec2 p){
+  vec3 c = background(p);
+  // en vertical la pantalla es angosta: se comprime la onda para que se curve dentro del cuadro
+  vec2 pr = uLayout == 1 ? vec2(p.x * 2.4, p.y * 1.25 - 0.35) : p;
+  c += ribbon(pr, 0.30, 0.65, 0.0034, 0.16, 2.3, 26);    // cinta lejana, desenfocada
+  c += ribbon(pr, -0.20, 1.0, 0.0011, 1.0, 0.0, 56);     // cinta principal
+  c += dust(p);
+  return c;
+}
+
+/* ---------- Anillo de vidrio líquido ---------- */
+mat3 rotX(float a){ float c = cos(a), s = sin(a); return mat3(1,0,0, 0,c,-s, 0,s,c); }
+mat3 rotY(float a){ float c = cos(a), s = sin(a); return mat3(c,0,s, 0,1,0, -s,0,c); }
+mat3 rotZ(float a){ float c = cos(a), s = sin(a); return mat3(c,-s,0, s,c,0, 0,0,1); }
+mat3 ROT;
+
+float map(vec3 pw){
+  vec3 q = ROT * pw;
+  float R = 0.66;
+  float az = atan(q.z, q.x);
+  vec2 t = vec2(length(q.xz) - R, q.y);
+  float tube = atan(t.y, t.x);
+  float r = 0.145
+          + 0.040 * sin(3.0 * az + 3.0 * PH) * cos(2.0 * tube - 2.0 * PH)
+          + 0.022 * sin(5.0 * az - 2.0 * PH + 1.0)
+          + 0.012 * sin(9.0 * az + 4.0 * PH + tube);
+  return (length(t) - r) * 0.7;
+}
+
+vec3 normalAt(vec3 p){
+  vec2 e = vec2(0.0009, 0.0);
+  return normalize(vec3(map(p + e.xyy) - map(p - e.xyy),
+                        map(p + e.yxy) - map(p - e.yxy),
+                        map(p + e.yyx) - map(p - e.yyx)));
+}
+
+void main(){
+  PH = TAU * uT;
+  vec2 p = (gl_FragCoord.xy - 0.5 * uRes) / uRes.y;
+
+  if (uLayout == 1) { RING_C = vec2(0.0, 0.25); RING_R = 0.50; }
+  else              { RING_C = vec2(0.43, 0.02); RING_R = 1.0; }
+
+  ROT = rotY(PH) * rotX(1.15 + 0.38 * sin(PH)) * rotZ(0.25 + 0.30 * cos(PH)) * rotY(0.35 * sin(2.0 * PH));
+
+  vec3 ro = vec3(0.0, 0.0, 3.4);
+  vec3 rd = normalize(vec3((p - RING_C) / RING_R, -1.65));
+
+  float t = 0.0, minD = 1e3; bool hit = false;
+  for (int i = 0; i < 140; i++) {
+    float d = map(ro + rd * t);
+    minD = min(minD, d);
+    if (d < 0.0006) { hit = true; break; }
+    t += d;
+    if (t > 6.0) break;
+  }
+
+  vec3 col;
+  if (hit) {
+    vec3 pos = ro + rd * t;
+    vec3 n = normalAt(pos);
+    float cosi = clamp(dot(-rd, n), 0.0, 1.0);
+    float F = 0.05 + 0.95 * pow(1.0 - cosi, 4.0);
+
+    vec3 rr = refract(rd, n, 1.0 / 1.42);
+    vec2 off = rr.xy * 0.44 + n.xy * 0.09;
+    vec3 refr;
+    refr.r = scene2D(p + off * 1.00).r;
+    refr.g = scene2D(p + off * 1.07).g;
+    refr.b = scene2D(p + off * 1.14).b;
+    refr = refr * vec3(0.78, 0.70, 0.95) + vec3(0.008, 0.003, 0.018);
+
+    vec3 rf = reflect(rd, n);
+    float band = rf.y * 0.95 + rf.x * 0.45 + 0.35 * sin(2.0 * PH);
+    vec3 irid = 0.5 + 0.5 * cos(TAU * (vec3(0.0, 0.33, 0.67) + band * 1.25));
+    irid = mix(irid, vec3(0.74, 0.58, 1.0), 0.22);
+
+    float spec = pow(max(dot(rf, normalize(vec3(-0.55, 0.70, 0.55))), 0.0), 48.0) * 2.6
+               + pow(max(dot(rf, normalize(vec3(0.75, -0.35, 0.55))), 0.0), 22.0) * 0.9;
+    float edge = pow(1.0 - cosi, 2.2);
+
+    float rim = pow(1.0 - cosi, 6.0);
+    col = refr * (1.0 - F * 0.8) + irid * edge * 1.25 + vec3(0.92, 0.74, 1.0) * rim * 1.1 + vec3(1.0, 0.94, 1.0) * spec;
+  } else {
+    col = scene2D(p);
+    col += vec3(0.46, 0.20, 0.85) * 0.10 * exp(-max(minD, 0.0) * 22.0);
+  }
+
+  // más calma a la izquierda para el texto del hero
+  if (uLayout == 0) col *= mix(0.78, 1.0, smoothstep(-0.95, 0.05, p.x));
+  else              col *= mix(0.50, 1.0, smoothstep(-0.45, 0.08, p.y));
+
+  vec2 v = p * vec2(0.62, 0.95);
+  col *= 1.0 - 0.55 * dot(v, v);
+  col = 1.0 - exp(-col * 1.08);
+  col += (hash21(gl_FragCoord.xy) - 0.5) / 255.0;
+  outColor = vec4(col, 1.0);
+}`;
+
+function sh(type, src){
+  const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s);
+  if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(s));
+  return s;
+}
+const prog = gl.createProgram();
+gl.attachShader(prog, sh(gl.VERTEX_SHADER, vs));
+gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, fs));
+gl.linkProgram(prog);
+if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(prog));
+gl.useProgram(prog);
+
+const buf = gl.createBuffer();
+gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 3,-1, -1,3]), gl.STATIC_DRAW);
+const loc = gl.getAttribLocation(prog, 'a');
+gl.enableVertexAttribArray(loc);
+gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+
+const uRes = gl.getUniformLocation(prog, 'uRes');
+const uT = gl.getUniformLocation(prog, 'uT');
+gl.uniform1i(gl.getUniformLocation(prog, 'uLayout'), LAYOUT);
+gl.viewport(0, 0, canvas.width, canvas.height);
+gl.uniform2f(uRes, canvas.width, canvas.height);
+
+window.__renderFrame = (n) => {
+  gl.uniform1f(uT, (n % window.__TOTAL_FRAMES) / window.__TOTAL_FRAMES);
+  gl.drawArrays(gl.TRIANGLES, 0, 3);
+  gl.finish();
+};
+
+// Vista en vivo si se abre directamente en el navegador
+if (!q.has('capture')) {
+  const t0 = performance.now();
+  const loop = () => { window.__renderFrame(Math.floor((performance.now() - t0) / 1000 * 30)); requestAnimationFrame(loop); };
+  requestAnimationFrame(loop);
+}
+window.__ready = true;
+</script>
+</body>
+</html>

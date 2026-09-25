@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vista previa del hero</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;600&family=Instrument+Serif:ital@1&display=swap" rel="stylesheet">
+<style>
+  :root { --bg: #07030f; --ink: #f3eefe; --muted: #b9a8dc; --violet: #8b5cf6; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--ink); font-family: 'Inter Tight', system-ui, sans-serif; }
+  .hero { position: relative; min-height: 100svh; overflow: hidden; display: grid; align-items: center; }
+  .hero video, .hero .poster { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .hero::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(7,3,15,.55) 0%, rgba(7,3,15,0) 55%); pointer-events: none; }
+  nav { position: absolute; top: 24px; left: 50%; transform: translateX(-50%); z-index: 2; display: flex; gap: 6px; padding: 6px;
+        border-radius: 999px; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.14);
+        backdrop-filter: blur(18px) saturate(160%); -webkit-backdrop-filter: blur(18px) saturate(160%);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,.18), 0 10px 30px rgba(0,0,0,.35); }
+  nav a { color: var(--ink); text-decoration: none; font-size: 14px; padding: 9px 16px; border-radius: 999px; opacity: .8; }
+  nav a:first-child { background: rgba(255,255,255,.1); opacity: 1; }
+  .copy { position: relative; z-index: 2; padding: 0 clamp(16px, 7vw, 120px); max-width: 760px; }
+  .eyebrow { color: var(--muted); letter-spacing: .14em; text-transform: uppercase; font-size: 13px; }
+  h1 { font-weight: 600; font-size: clamp(44px, 7vw, 104px); line-height: .95; letter-spacing: -.035em; margin: 18px 0 20px; }
+  h1 em { font-family: 'Instrument Serif', serif; font-weight: 400; letter-spacing: -.01em; color: #d8c7ff; }
+  p { color: var(--muted); font-size: clamp(16px, 1.4vw, 19px); line-height: 1.55; max-width: 520px; margin: 0 0 32px; }
+  .cta { display: inline-flex; gap: 12px; flex-wrap: wrap; }
+  .btn { color: var(--ink); text-decoration: none; padding: 14px 22px; border-radius: 999px; font-weight: 600; font-size: 15px;
+         background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.18);
+         backdrop-filter: blur(16px) saturate(170%); -webkit-backdrop-filter: blur(16px) saturate(170%);
+         box-shadow: inset 0 1px 0 rgba(255,255,255,.25), inset 0 -8px 20px rgba(139,92,246,.18); }
+  .btn.primary { background: linear-gradient(180deg, rgba(167,139,250,.55), rgba(109,40,217,.55)); border-color: rgba(216,199,255,.45); }
+  @media (max-width: 700px) { nav { display: none; } .hero::after { background: linear-gradient(0deg, rgba(7,3,15,.8) 10%, rgba(7,3,15,0) 60%); } .copy { align-self: end; padding-bottom: 12vh; } }
+</style>
+</head>
+<body>
+<section class="hero">
+  <picture>
+    <source media="(max-aspect-ratio: 4/5)" srcset="out/hero-mobile-poster.webp">
+    <img class="poster" src="out/hero-poster.webp" alt="">
+  </picture>
+  <video muted loop playsinline preload="none" aria-hidden="true"></video>
+  <nav><a href="#">Inicio</a><a href="#">Web</a><a href="#">Video</a><a href="#">Proceso</a><a href="#">Contacto</a></nav>
+  <div class="copy">
+    <div class="eyebrow">Diseño web · Video · IA</div>
+    <h1>Tu Nombre<br><em>diseña experiencias</em></h1>
+    <p>Landings con dirección de arte, spots de motion design y un flujo de trabajo potenciado con IA — de la idea al entregable.</p>
+    <div class="cta"><a class="btn primary" href="#">Ver proyectos</a><a class="btn" href="#">Contacto</a></div>
+  </div>
+</section>
+<script>
+  // Elige el loop según la pantalla; sin video si el usuario pide menos movimiento o ahorro de datos.
+  (() => {
+    const v = document.querySelector('.hero video');
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const saveData = navigator.connection && navigator.connection.saveData;
+    if (reduce || saveData) { v.remove(); return; }
+    const portrait = matchMedia('(max-aspect-ratio: 4/5)').matches;
+    const big = Math.max(innerWidth, innerHeight) * devicePixelRatio > 1600;
+    const name = `out/hero-${portrait ? 'mobile-' : ''}${big ? '1080' : '720'}`;
+    const webm = v.canPlayType('video/webm; codecs="vp9"');
+    v.src = `${name}.${webm ? 'webm' : 'mp4'}`;
+    v.style.opacity = 0; v.style.transition = 'opacity .8s ease';
+    v.addEventListener('playing', () => { v.style.opacity = 1; }, { once: true });
+    v.play().catch(() => {});
+  })();
+</script>
+</body>
+</html>

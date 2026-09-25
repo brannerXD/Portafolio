@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Branner Ramirez — Diseño web y video</title>
+  <meta name="description" content="Portafolio de Branner Ramirez: landings con dirección de arte, spots de motion design y un flujo de trabajo potenciado con IA. Medellín, Colombia.">
+  <meta name="theme-color" content="#07030f">
+  <meta property="og:title" content="Branner Ramirez — Diseño web y video">
+  <meta property="og:description" content="Landings con dirección de arte, spots de motion design y un flujo de trabajo potenciado con IA.">
+  <meta property="og:image" content="media/hero/hero-poster.webp">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+  <link rel="preload" as="image" href="media/hero/hero-poster.webp" media="(min-aspect-ratio: 4/5)">
+  <link rel="preload" as="image" href="media/hero/hero-mobile-poster.webp" media="(max-aspect-ratio: 4/5)">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Branner Ramirez",
+    "jobTitle": "Diseñador web y de video",
+    "email": "mailto:branner360@gmail.com",
+    "address": { "@type": "PostalAddress", "addressLocality": "Medellín", "addressCountry": "CO" },
+    "sameAs": [
+      "https://github.com/brannerXD",
+      "https://www.linkedin.com/in/branner-ram%C3%ADrez-1b23a231a/",
+      "https://www.instagram.com/branner.__/",
+      "https://x.com/branner360"
+    ],
+    "knowsAbout": ["Diseño web", "Landing pages", "Motion design", "Edición de video", "Inteligencia artificial aplicada"]
+  }
+  </script>
+  <!--
+    Pantalla de carga. Vive en el HTML (no en React) para cubrir la página desde
+    el primer pintado; src/lib/preloader.ts decide cuándo se levanta.
+  -->
+  <style>
+    #preloader{position:fixed;inset:0;z-index:200;display:grid;place-items:center;background:#07030f;color:#f4effe;
+      font-family:'Inter Tight',system-ui,sans-serif;transition:clip-path .8s cubic-bezier(.7,0,.2,1),opacity .8s ease}
+    #preloader.is-leaving{clip-path:inset(0 0 100% 0);opacity:.6;pointer-events:none}
+    #preloader .glow{position:absolute;width:38rem;height:38rem;max-width:120vw;border-radius:50%;
+      background:radial-gradient(circle,rgb(124 58 237/.22),transparent 65%);animation:pl-breathe 2.4s ease-in-out infinite alternate}
+    #preloader .stack{position:relative;display:flex;flex-direction:column;align-items:center;gap:28px}
+    #preloader svg{width:92px;height:92px;overflow:visible;animation:pl-in .9s cubic-bezier(.22,1,.36,1) both}
+    #preloader .ring{fill:none;stroke:url(#pl-grad);stroke-width:5;stroke-linecap:round;stroke-dasharray:252;stroke-dashoffset:252;
+      transform-origin:50% 50%;animation:pl-draw 1.4s cubic-bezier(.65,0,.35,1) .15s forwards,pl-spin 6s linear infinite}
+    #preloader .ring-soft{fill:none;stroke:rgb(255 255 255/.08);stroke-width:5}
+    #preloader .name{font-size:clamp(15px,3.6vw,20px);font-weight:600;letter-spacing:.42em;text-indent:.42em;text-transform:uppercase;
+      animation:pl-in .9s cubic-bezier(.22,1,.36,1) .18s both}
+    #preloader .rail{position:relative;width:min(13rem,42vw);height:1px;overflow:hidden;background:rgb(255 255 255/.12);
+      animation:pl-in .9s cubic-bezier(.22,1,.36,1) .3s both}
+    #preloader .rail span{position:absolute;inset:0;transform-origin:left;transform:scaleX(0);
+      background:linear-gradient(90deg,#e879f9,#a78bfa,#67e8f9);transition:transform .35s cubic-bezier(.22,1,.36,1)}
+    #preloader .tag{font-size:12px;letter-spacing:.3em;text-transform:uppercase;color:#9a8bbb;animation:pl-in .9s cubic-bezier(.22,1,.36,1) .42s both}
+    @keyframes pl-in{from{opacity:0;transform:translateY(10px);filter:blur(8px)}to{opacity:1;transform:none;filter:none}}
+    @keyframes pl-draw{to{stroke-dashoffset:60}}
+    @keyframes pl-spin{to{transform:rotate(360deg)}}
+    @keyframes pl-breathe{from{transform:scale(.92);opacity:.7}to{transform:scale(1.06);opacity:1}}
+    @media (prefers-reduced-motion:reduce){#preloader{display:none}}
+  </style>
+  <noscript><style>#preloader{display:none}</style></noscript>
+</head>
+<body>
+  <div id="preloader" aria-hidden="true">
+    <span class="glow"></span>
+    <div class="stack">
+      <svg viewBox="0 0 92 92">
+        <defs><linearGradient id="pl-grad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e879f9"/><stop offset=".5" stop-color="#a78bfa"/><stop offset="1" stop-color="#67e8f9"/></linearGradient></defs>
+        <circle class="ring-soft" cx="46" cy="46" r="40"/>
+        <circle class="ring" cx="46" cy="46" r="40"/>
+      </svg>
+      <span class="name">Branner Ramirez</span>
+      <span class="rail"><span></span></span>
+      <span class="tag">Diseño web · Video · IA</span>
+    </div>
+  </div>
+  <div id="root"></div>
+  <noscript><p style="padding:24px;color:#f4effe">Este portafolio necesita JavaScript. Contacto: branner360@gmail.com · WhatsApp 314 260 0182</p></noscript>
+  <script type="module" src="/src/main.tsx"></script>
+</body>
+</html>

@@ -1,0 +1,118 @@
+[
+  {
+    "tipo": "Motion design · Explainer",
+    "texto": "Explainer de un minuto para un producto de préstamos en USDC: tipografía editorial, diagramas simples y un globo de datos que abre y cierra la pieza.",
+    "id": "bagfi-explainer",
+    "titulo": "BagFi — explainer",
+    "datos": [
+      "60 s"
+    ],
+    "sonido": true,
+    "destacado": false,
+    "vertical": false,
+    "original": "bagfi-original.mp4"
+  },
+  {
+    "tipo": "Motion design · Comercial",
+    "texto": "Un comercial corto donde cada idea del producto tiene su propio color: todas las cadenas, puentes, tarjeta virtual y lanzamiento de tokens.",
+    "id": "omnihood-comercial",
+    "titulo": "OmniHood — comercial",
+    "datos": [
+      "23 s"
+    ],
+    "sonido": true,
+    "destacado": true,
+    "vertical": false,
+    "original": "1790216472351.mp4"
+  },
+  {
+    "tipo": "Motion design · Cinematic",
+    "texto": "Pieza cinematográfica sobre reputación y evidencia: partículas, una huella dactilar y tipografía de impacto sobre negro.",
+    "id": "kolateral-cinematic",
+    "titulo": "KOLateral — cinematic",
+    "datos": [
+      "90 s"
+    ],
+    "sonido": true,
+    "destacado": false,
+    "vertical": false,
+    "original": "1790216479420.mp4"
+  },
+  {
+    "tipo": "Motion design · Comercial",
+    "texto": "Spot de mercado a 60 fps: gráficas, tablas y tipografía en movimiento para contar una sola acción.",
+    "id": "stock-royale-spot",
+    "titulo": "Stock Royale — spot",
+    "datos": [
+      "63 s"
+    ],
+    "sonido": true,
+    "destacado": false,
+    "vertical": false,
+    "original": "1790216522965.mp4"
+  },
+  {
+    "tipo": "Motion design · Producto",
+    "texto": "La marca y el producto en movimiento: un solo hub para todas las cadenas, con tarjeta virtual.",
+    "id": "omnihood-producto",
+    "titulo": "OmniHood — producto",
+    "datos": [
+      "73 s"
+    ],
+    "sonido": true,
+    "destacado": false,
+    "vertical": false,
+    "original": "1790216539189.mp4"
+  },
+  {
+    "tipo": "Motion design · Producto de IA",
+    "texto": "Cada auto es un modelo de pronóstico que propone su línea en la pista; Zeno las pondera en una sola. Reescribí el guion para que ningún concepto contradiga la documentación del producto.",
+    "id": "zeno",
+    "titulo": "Zeno Divergent — comercial",
+    "datos": [
+      "60 s",
+      "1080p · 30 fps",
+      "Se muestra sin audio"
+    ],
+    "sonido": false,
+    "destacado": false
+  },
+  {
+    "tipo": "Motion design · Explainer",
+    "texto": "La versión explicativa del mismo sistema visual: cómo funciona el producto, paso a paso.",
+    "id": "kolateral-explainer",
+    "titulo": "KOLateral — explainer",
+    "datos": [
+      "118 s"
+    ],
+    "sonido": true,
+    "destacado": false,
+    "vertical": false,
+    "original": "1790216557634.mp4"
+  },
+  {
+    "tipo": "Motion design · Producto",
+    "texto": "Una pieza enfocada en los intercambios entre cadenas: tokens, redes y tiempos de ejecución.",
+    "id": "omnihood-swaps",
+    "titulo": "OmniHood — swaps",
+    "datos": [
+      "84 s"
+    ],
+    "sonido": true,
+    "destacado": false,
+    "vertical": false,
+    "original": "1790216623200.mp4"
+  },
+  {
+    "tipo": "Recorrido de producto",
+    "texto": "Un recorrido corto por el sitio del estudio, con la escena 3D en movimiento.",
+    "id": "hexor-video",
+    "titulo": "Hexor Labs — recorrido",
+    "datos": [
+      "26 s",
+      "720p"
+    ],
+    "sonido": false,
+    "destacado": false
+  }
+]

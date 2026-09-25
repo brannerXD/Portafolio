@@ -1,0 +1,29 @@
+{
+  "name": "portafolio-branner-ramirez",
+  "private": true,
+  "type": "module",
+  "description": "Portafolio de Branner Ramirez — diseño web, video e IA. React + TypeScript + Tailwind.",
+  "scripts": {
+    "dev": "vite",
+    "typecheck": "tsc -p tsconfig.json && tsc -p tsconfig.node.json",
+    "build": "npm run typecheck && vite build",
+    "preview": "vite preview --port 4180",
+    "capturas": "node tools/capturar-sitios.mjs",
+    "medios": "node tools/preparar-medios.mjs"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.3.3",
+    "@types/node": "^26.6.2",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.1",
+    "puppeteer-core": "^24.0.0",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^5.9.3",
+    "vite": "^8.3.0"
+  },
+  "dependencies": {
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
+  }
+}

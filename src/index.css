@@ -1,0 +1,109 @@
+/* ============================================================
+   Portafolio — Branner Ramirez
+   Tailwind v4. El morado vive en el hero (el loop y la marca); el resto
+   es negro cálido y papel, plano, para que el trabajo ponga el color.
+   ============================================================ */
+@import "tailwindcss";
+
+@theme {
+  /* Negro cálido y texto color papel: el morado queda para el hero (la marca y el video) */
+  --color-bg: #0f0d0c;
+  --color-bg-2: #171412;
+  --color-ink: #f1ebe2;
+  --color-ink-2: #c4bbaf;
+  --color-muted: #8c8378;
+  --color-violet: #8b5cf6;
+  --color-violet-2: #a78bfa;
+  --color-lilac: #cdbcff;
+  --color-line: rgb(241 235 226 / 0.12);
+  --color-line-strong: rgb(241 235 226 / 0.32);
+  --color-surface: rgb(241 235 226 / 0.035);
+
+  --font-sans: "Inter Tight", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-serif: "Instrument Serif", Georgia, serif;
+
+  --ease-soft: cubic-bezier(0.2, 0.7, 0.1, 1);
+
+  --animate-hint: hint 2.2s cubic-bezier(0.2, 0.7, 0.1, 1) infinite;
+  --animate-pop: pop 0.45s cubic-bezier(0.2, 0.7, 0.1, 1);
+
+  @keyframes hint {
+    0% { transform: translateY(0); opacity: 0; }
+    30% { opacity: 1; }
+    100% { transform: translateY(16px); opacity: 0; }
+  }
+  @keyframes pop { from { opacity: 0; transform: translateY(16px) scale(0.98); } }
+}
+
+/* Palabra rotativa del hero (BlurWord) */
+@keyframes blur-in {
+  from { opacity: 0; filter: blur(18px); transform: translateY(0.08em); }
+  to { opacity: 1; filter: blur(0); transform: none; }
+}
+
+/* ---------- Base ---------- */
+@layer base {
+  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; color-scheme: dark; }
+  body {
+    @apply bg-bg font-sans text-[16px] leading-[1.55] text-ink antialiased sm:text-[17px];
+    overflow-x: hidden;
+  }
+  h1, h2, h3 { @apply font-semibold leading-none tracking-[-0.03em]; }
+  em { @apply font-serif font-normal italic tracking-[-0.01em] text-lilac; }
+  :focus-visible { @apply rounded-lg outline-2 outline-offset-3 outline-violet-2; }
+  ::selection { background: rgb(205 188 255 / 0.35); }
+  [hidden] { display: none !important; }
+}
+
+/* ---------- Vidrio (solo lo que flota sobre el video: menú y reproductor) ---------- */
+@utility glass {
+  background: rgb(15 13 12 / 0.55);
+  border: 1px solid rgb(241 235 226 / 0.14);
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+}
+
+@utility eyebrow {
+  @apply text-[13px] font-medium tracking-[0.04em] text-muted;
+}
+
+@utility btn {
+  @apply inline-flex items-center justify-center gap-2.5 rounded-full border border-line-strong px-6 py-[14px] text-[15px] font-semibold text-ink no-underline;
+  transition: background 0.25s, color 0.25s, border-color 0.25s;
+  &:hover { @apply border-ink bg-ink/8; }
+}
+
+@utility btn-primary {
+  @apply border-ink bg-ink text-bg;
+  &:hover { @apply border-lilac bg-lilac text-bg; }
+}
+
+/* Carrusel deslizable solo en celular; desde `sm` cada sección define su grilla */
+@utility carousel {
+  @media (width < 40rem) {
+    display: flex;
+    gap: 0.75rem;
+    margin-inline: -1rem;
+    padding: 0.25rem 1rem 0.75rem;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: 1rem;
+    scrollbar-width: none;
+    &::-webkit-scrollbar { display: none; }
+    & > * { flex: 0 0 84%; scroll-snap-align: start; }
+  }
+}
+
+/* ---------- Aparición al hacer scroll ---------- */
+@utility reveal {
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+  &.is-in { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+  .reveal { opacity: 1; transform: none; }
+}
