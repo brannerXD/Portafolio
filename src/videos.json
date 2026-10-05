@@ -71,10 +71,9 @@
     "titulo": "Zeno Divergent — comercial",
     "datos": [
       "60 s",
-      "1080p · 30 fps",
-      "Se muestra sin audio"
+      "1080p · 30 fps"
     ],
-    "sonido": false,
+    "sonido": true,
     "destacado": false
   },
   {

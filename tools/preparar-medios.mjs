@@ -52,7 +52,7 @@ function sitios() {
 /* ---------- Sección de video ---------- */
 // audio: false cuando la música no tiene licencia para publicarse
 const VIDEOS = [
-  { id: 'zeno', src: `${DEV}/VideoF1/out/zeno_divergent_60s.mp4`, poster: 14, audio: false },
+  { id: 'zeno', src: `${process.env.USERPROFILE}/Downloads/F1_Def.mp4`, poster: 14, audio: true },
   { id: 'hexor-video', src: `${DEV}/Hexor Labs/hexor-labs-recorrido.mp4`, poster: 2, audio: false },
 ];
 
