@@ -1,5 +1,19 @@
 [
   {
+    "tipo": "Animación 3D · Trailer",
+    "texto": "Trailer de lanzamiento hecho en Blender para un mundo de IA tipo backrooms: personajes con rig propio y giros naturales, una persecución con una entidad animada a mano, textos en 3D dentro del mapa y montaje al ritmo de la música. Mapa de EMPEROR-MARK y entidad de Unschooling with Fin (CC BY).",
+    "id": "bagroom-trailer",
+    "titulo": "Bagroom — trailer",
+    "datos": [
+      "50 s",
+      "Blender · EEVEE"
+    ],
+    "sonido": true,
+    "destacado": false,
+    "vertical": false,
+    "original": "bagroom-trailer-original.mp4"
+  },
+  {
     "tipo": "Motion design · Explainer",
     "texto": "Explainer de un minuto para un producto de préstamos en USDC: tipografía editorial, diagramas simples y un globo de datos que abre y cierra la pieza.",
     "id": "bagfi-explainer",
